@@ -1,7 +1,17 @@
-# Express Books
+# OBS Text Express
 
-Zocalos Express es una Aplicacion Web para guardar y listar textos de tipo lowerthird para OBS Studio. 
-La lista de datos se guardan en formato JSON y cuando se elije uno para usar se guarda un par en Formato TXT.
+- `English` OBS Text Express is a Web Application; to create, modify and list texts.
+This app creates two text outputs to be imported as input from the OBS Studio text layer.
+This solution is based on the need to dynamically modify lowerthirds texts.
+The list of data does not use a database, it is saved in JSON format.
+
+- `Spanish` OBS Text Express es una Aplicacion Web; para crear, modificar y listar textos. 
+Esta app crea dos salidas de texto para ser importados como entrada desde la capa de texto del OBS Studio. 
+Esta solucion se basa en la necesidad de modificar textos de los lowerthirds dinamicamente.
+La lista de datos no utililiza una base de datos, estas se guardan en formato JSON.
+
+
+
 
 # ScreenShoot
 
@@ -10,7 +20,7 @@ La lista de datos se guardan en formato JSON y cuando se elije uno para usar se 
 # Installation
 
 ```shell
-git clone https://github.com/FaztTech/books-express
+git clone https://github.com/walter8729/obs-text-express.git
 npm install
 npm run build
 npm start
@@ -26,14 +36,14 @@ Also you can create a .env file with the environment variables mentioned above.
 # Docker
 
 ```shell
-docker build -t zocalo-express .
+docker build -t obs-text-express .
 ```
 
 ```shell
-docker run -p 80:5000 zocalo-express .
+docker run -v /path/of/data/:/usr/src/app -p 80:5000 obs-text-express .
 ```
 
-then visit: `http://localhost`
+then visit: `http://localhost:5000`
 
 # Considerations
 
@@ -42,6 +52,8 @@ then visit: `http://localhost`
 ## Reference
 
 - https://babeljs.io/docs/en/babel-plugin-transform-runtime
+
+- Based in code of: https://github.com/fazt/books-express 
 
 ### Todo
 
