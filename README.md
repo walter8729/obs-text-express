@@ -40,7 +40,7 @@ docker build -t obs-text-express .
 ```
 
 ```shell
-docker run -v /path/of/data/:/usr/src/app -p 80:5000 obs-text-express .
+docker run -v /path/of/data/:/usr/src/app -p 5000:5000 obs-text-express .
 ```
 
 then visit: `http://localhost:5000`
