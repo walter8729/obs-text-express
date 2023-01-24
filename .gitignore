@@ -6,3 +6,7 @@ dist
 
 package-lock.json
 yarn.lock
+
+src/zocalos.json 
+src/t1.txt
+src/t2.txt
