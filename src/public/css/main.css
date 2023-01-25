@@ -1,3 +1,19 @@
 body {
     background: #222f3e;
 }
+.glow {
+    color: #ffffff;
+    text-align: center;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+  
+  @-webkit-keyframes glow {
+    from {
+      text-shadow: 0 0 10px #eeeeee, 0 0 20px #000000,  0 0 30px #ffffff;
+    }
+    to {
+      text-shadow: 0 0 20px #eeeeee, 0 0 30px #dc3545, 0 0 40px #dc3545;
+    }
+  }
