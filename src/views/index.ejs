@@ -11,68 +11,66 @@
   <%- include('partials/navigation') %>
     <div class="container p-2 pb-4 pt-2 sticky-top">
       <div class="row">
-        <%if (zocalos.length> 0) {%>
-          <% zocalos.forEach(function(zocalo) { %>
-            <%if (zocalo.toUse==true) {%>
-              <!-- <%= zocalo.id %> -->
-              <div class="col-md-6 ">
-                <div class="card bg-dark ">
-                  <div
-                    class="card-header text-white d-flex justify-content-between align-items-center py-1 border border-success">
-                    <h3 class="text-danger glow">AL AIRE</h3>
-                  </div>
-                  <div class="card-body text-light py-1 border border-info">
-                    <%= zocalo.titulo %>
-                  </div>
-                  <div class="card-body text-light py-1 border border-info">
-                    <%= zocalo.subtitulo %>
-                  </div>
+        <% zocalosAux.forEach(function(zocaloAux) { %>
+
+          <!-- INICIO SECCION TEXTO RAPIDO -->
+          <%if (zocaloAux.id==="auxiliar" ) {%>
+            <div class="col-md-6 ">
+              <div class="card bg-dark border-info">
+                <div class="card-header py-0 text-white d-flex justify-content-between align-items-center">
+                  TEXTO AUXILIAR
+                </div>
+                <div class="card-body  text-light py-2">
+                  <form method="POST" action="/updateaux" class="card bg-dark text-light">
+                    <input name="id" type="hidden" value="auxiliar">
+                    <div class="mb-1">
+                      <!-- <label for="titulo">Titulo</label> -->
+                      <input name="titulo" type="text" class="form-control rounded-0" placeholder="Ingrese algun texto"
+                        value="<%= zocaloAux.titulo %>">
+                    </div>
+
+                    <div class="btn-group mt-2">
+
+                      <input type="submit" value="Actualizar" class="btn btn-outline-success btn-sm">
+
+                    </div>
+                  </form>
                 </div>
               </div>
-              <%}%>
-                <%})%>
-                  <%}else {%>
-                      <div class="col-md-6">
-                        <div class="card bg-dark">
-                          <div class="card-header text-white d-flex justify-content-between align-items-center">
-                            NO HAY ZOCALOS EN LA LISTA
-                          </div>
-                        </div>
-                    </div>
-                    <%}%>
-                      <!-- INICIO SECCION TEXTO RAPIDO -->
+            </div>
+            <%}%>
+              <%})%>
+                <!-- FINAL SECCION TEXTO RAPIDO -->
+
+                <%if (zocalos.length> 0) {%>
+                  <% zocalos.forEach(function(zocalo) { %>
+                    <%if (zocalo.toUse==true) {%>
+                      <!-- <%= zocalo.id %> -->
                       <div class="col-md-6 ">
-                        <div class="card bg-dark border-info">
-                          <div class="card-header py-0 text-white d-flex justify-content-between align-items-center">
-                            TEXTO RAPIDO
+                        <div class="card bg-dark ">
+                          <div
+                            class="card-header text-white d-flex justify-content-between align-items-center py-1  border border-success">
+                            <h3 class="text-danger glow pt-1">AL AIRE</h3>
                           </div>
-                          <div class="card-body  text-light py-2">
-                            <form method="POST" target="/" class="card bg-dark text-light">
-
-                              <div class="mb-1">
-                                <!-- <label for="titulo">Titulo</label> -->
-                                <input name="titulo" type="text" class="form-control rounded-0"
-                                  placeholder="Ingrese un Titulo" value="" maxlength="40" required>
-                              </div>
-
-                              <div class="btn-group mt-2">
-
-                                <input type="submit" value="Actualizar" class="btn btn-outline-primary btn-sm">
-
-                                <a href="" class="btn btn-outline-danger btn-sm mx-1">
-                                  Borrar
-                                </a>
-
-                                <a href="" class="btn btn btn-outline-success btn-sm">
-                                  Usar
-                                </a>
-                              </div>
-                            </form>
+                          <div class="card-body text-light py-1 border border-info">
+                            <%= zocalo.titulo %>
+                          </div>
+                          <div class="card-body text-light py-1 border border-info">
+                            <%= zocalo.subtitulo %>
                           </div>
                         </div>
                       </div>
-                      <!-- FINAL SECCION TEXTO RAPIDO -->
-
+                      <%}%>
+                        <%})%>
+                          <%}else {%>
+                            <div class="col-md-6">
+                              <div class="card bg-dark">
+                                <div class="card-header text-white d-flex justify-content-between align-items-center">
+                                  NO HAY ZOCALOS EN LA LISTA
+                                </div>
+                              </div>
+                            </div>
+                            <%}%>
       </div>
     </div>
 
@@ -88,47 +86,42 @@
           <% zocalos.forEach(function(zocalo) { %>
             <div class="col-md-4">
               <div class="card bg-dark mb-3">
-                <%if (zocalo.toUse==true) {%>
-                  <!-- <%= zocalo.id %> -->
-                  <div class="card-header text-white bg-success d-flex justify-content-between align-items-center">
-                    Al Aire
-                  </div>
-                  <%} else {%>
-                    <div class="card-header text-white d-flex justify-content-between align-items-center mb-0">
-                      En Espera
+
+                <div class="card-header text-white <%= zocalo.toUse ? 'bg-success glow' : '' %>" d-flex
+                  justify-content-between align-items-center">
+                  <%= zocalo.toUse ? 'Al Aire' : 'En Espera' %>
+                </div>
+
+                <div class="card-body  text-light ">
+                  <form method="POST" action="/update" class="card bg-dark text-light">
+                    <input name="id" type="hidden" value="<%= zocalo.id %>">
+
+                    <div class="mb-1 mt-0">
+                      <!-- <label for="titulo">Titulo</label> -->
+                      <input name="titulo" type="text" class="form-control rounded-0" placeholder="Ingrese un Titulo"
+                        value="<%= zocalo.titulo %>" maxlength="40" required>
                     </div>
-                    <%}%>
-                      <div class="card-body  text-light ">
-                        <form method="POST" target="/" class="card bg-dark text-light">
-                          <input name="id" type="hidden" value="<%= zocalo.id %>">
 
-                          <div class="mb-1 mt-0">
-                            <!-- <label for="titulo">Titulo</label> -->
-                            <input name="titulo" type="text" class="form-control rounded-0"
-                              placeholder="Ingrese un Titulo" value="<%= zocalo.titulo %>" maxlength="40" required>
-                          </div>
+                    <div class="mb-1">
+                      <!-- <label for="subtitulo">Sub-Titulo</label> -->
+                      <input name="subtitulo" type="text" class="form-control rounded-0"
+                        placeholder="Ingrese un Subtitulo" value="<%= zocalo.subtitulo %>" maxlength="55" required>
+                    </div>
 
-                          <div class="mb-1">
-                            <!-- <label for="subtitulo">Sub-Titulo</label> -->
-                            <input name="subtitulo" type="text" class="form-control rounded-0"
-                              placeholder="Ingrese un Subtitulo" value="<%= zocalo.subtitulo %>" maxlength="55"
-                              required>
-                          </div>
+                    <div class="btn-group mt-2">
 
-                          <div class="btn-group mt-2">
+                      <input type="submit" value="Actualizar" class="btn btn-outline-primary btn-sm">
 
-                            <input type="submit" value="Actualizar" class="btn btn-outline-primary btn-sm">
+                      <a href="/delete/<%= zocalo.id %>" class="btn btn-outline-danger btn-sm mx-1">
+                        Borrar
+                      </a>
 
-                            <a href="/delete/<%= zocalo.id %>" class="btn btn-outline-danger btn-sm mx-1">
-                              Borrar
-                            </a>
-
-                            <a href="/toUse/<%= zocalo.id %>" class="btn btn btn-outline-success btn-sm">
-                              Usar
-                            </a>
-                          </div>
-                        </form>
-                      </div>
+                      <a href="/toUse/<%= zocalo.id %>" class="btn btn btn-outline-success btn-sm">
+                        Usar
+                      </a>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
             <%})%>

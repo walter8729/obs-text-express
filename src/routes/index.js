@@ -6,9 +6,9 @@ import {
   renderNewEntryPage,
   createNewEntry,
   deleteEntry,
-  renderUpdatePage,
   updateEntry,
-  toUseEntry
+  toUseEntry,
+  updateAux,
 } from "../controllers/index.controller";
 
 const router = Router();
@@ -23,9 +23,9 @@ router.post("/new-entry", createNewEntry);
 
 router.get("/delete/:id", deleteEntry);
 
-router.get("/update", renderUpdatePage);
+router.post("/update", updateEntry);
 
-router.post("/", updateEntry);
+router.post("/updateaux", updateAux);
 
 router.get("/touse/:id", toUseEntry);
 
