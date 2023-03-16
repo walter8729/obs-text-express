@@ -1,6 +1,187 @@
 import config from "../config";
 import fs from "fs";
 import { v4 } from "uuid";
+import { obs, sendCommand } from '../obs';
+import { compareVersions } from 'compare-versions'
+
+
+//variables para control obs
+const OBS_WEBSOCKET_LATEST_VERSION = '5.0.2'
+// State
+let connected
+let heartbeat = {}
+let heartbeatInterval
+let isFullScreen
+let isStudioMode = false
+let isSceneOnTop
+let isVirtualCamActive
+//let isIconMode = window.localStorage.getItem('isIconMode') || false;
+let isReplaying;
+let editable = false;
+let address;
+let password;
+let scenes = [];
+let replayError = '';
+let errorMessage = '';
+let imageFormat = 'jpg';
+let programScene = ''
+let previewScene = ''
+
+//////////////////
+
+
+
+async function connect() {
+  address = address || 'ws://localhost:4455'
+  if (address.indexOf('://') === -1) {
+    const secure = location.protocol === 'https:' || address.endsWith(':443')
+    address = secure ? 'wss://' : 'ws://' + address
+  }
+  console.log('Connecting to:', address, '- using password:', password)
+  await disconnect()
+  try {
+    const { obsWebSocketVersion, negotiatedRpcVersion } = await obs.connect(
+      address,
+      password
+    )
+    console.log(
+      `Connected to obs-websocket version ${obsWebSocketVersion} (using RPC ${negotiatedRpcVersion})`
+    )
+  } catch (e) {
+    console.log(e)
+    errorMessage = e.message
+  }
+};
+
+async function disconnect() {
+  await obs.disconnect()
+  clearInterval(heartbeatInterval)
+  connected = false
+  errorMessage = 'Disconnected'
+};
+
+// OBS events
+obs.on('ConnectionClosed', () => {
+  connected = false
+  // window.history.pushState(
+  //   '',
+  //   document.title,
+  //   window.location.pathname + window.location.search
+  // ) // Remove the hash
+  console.log('Connection closed')
+})
+
+obs.on('Identified', async () => {
+  console.log('Connected')
+  connected = true
+  const data = await sendCommand('GetVersion')
+  const version = data.obsWebSocketVersion || ''
+  console.log('OBS-websocket version:', version)
+  if (compareVersions(version, OBS_WEBSOCKET_LATEST_VERSION) < 0) {
+    alert(
+      'You are running an outdated OBS-websocket (version ' +
+      version +
+      '), please upgrade to the latest version for full compatibility.'
+    )
+  }
+  if (
+    data.supportedImageFormats.includes('webp') &&
+    document
+      .createElement('canvas')
+      .toDataURL('image/webp')
+      .indexOf('data:image/webp') === 0
+  ) {
+    imageFormat = 'webp'
+  }
+  heartbeatInterval = setInterval(async () => {
+    const stats = await sendCommand('GetStats')
+    const streaming = await sendCommand('GetStreamStatus')
+    const recording = await sendCommand('GetRecordStatus')
+    heartbeat = { stats, streaming, recording }
+    //console.log(heartbeat);
+  }, 1000) // Heartbeat
+  isStudioMode =
+    (await sendCommand('GetStudioModeEnabled')).studioModeEnabled || false
+  isVirtualCamActive =
+    (await sendCommand('GetVirtualCamStatus')).outputActive || false
+})
+
+obs.on('ConnectionError', async () => {
+  errorMessage = 'Please enter your password:'
+  document.getElementById('password').focus()
+  if (!password) {
+    connected = false
+  } else {
+    await connect()
+  }
+})
+
+
+
+
+
+/**
+ * 
+ * @param {string} sceneName Nombre de la escena 
+ * @param {string} sourceName Nombre del source en la escena 
+ * @param {boolean} enable true para activar y false para desactiva
+ */
+ async function switchSceneItem(sceneName, sourceName, enable) {
+  let sceneItemIdObj = await sendCommand('GetSceneItemId', {
+     sceneName,
+     sourceName,
+   })
+   console.log(sceneItemIdObj);
+   
+   let sceneItemId = await sceneItemIdObj.sceneItemId;
+
+   console.log(`El id de la escena es=`+sceneItemId)
+ 
+   await sendCommand(`SetSceneItemEnabled`, {
+     sceneName,
+     sceneItemId,
+     sceneItemEnabled: enable
+   })
+ }
+
+
+
+
+
+
+password = `000000`;
+
+address = `ws://localhost:4455`;
+
+
+connect();
+
+
+
+switchSceneItem(`DESPERTATE`,`ENVIVO-DESPERTATE`,false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //leer json con los zocalos desde archivo
 const json_zocalos = fs.readFileSync("src/zocalos.json", "utf-8");
@@ -32,7 +213,7 @@ export const renderNewEntryPage = (req, res) => res.render("new-entry");
 
 
 
-export const updateAux = (req, res) => {
+export const updateAux = async (req, res) => {
   const { id, titulo } = req.body;
 
   console.log("reques id " + id);
@@ -45,7 +226,7 @@ export const updateAux = (req, res) => {
       console.log("Escribiendo el JSON");
       const json_zocalosAux = JSON.stringify(zocalosAux);
       fs.writeFileSync("src/zocalosaux.json", json_zocalosAux);
-      
+
       console.log("Escribiendo el txt");
       fs.writeFileSync("src/t0.txt", zocalosAux[index].titulo, "utf-8");
     }
